@@ -10,5 +10,5 @@ export const alt = "Petition";
 export default async function OgImage({ params }: { params: Promise<{ slug: string }> }) {
   // Drafts and unknown slugs get a neutral card, so the image never reveals an unpublished title.
   const campaign = await visibleCampaign((await params).slug);
-  return campaign ? ogCard(campaign.title, campaign.signatureCount) : ogCard("Petition", null);
+  return campaign ? ogCard(campaign.title, { count: campaign.signatureCount, goal: campaign.goal, milestones: campaign.milestones }) : ogCard("Petition", null);
 }

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const TIME_BUDGET_MS = 40_000; // stop starting chunks well before maxDuration
-const MAX_CHUNKS = 6; // 6 queries each: ≤ 36 PostHog queries per run, under the 120/hour organisation limit
+const MAX_CHUNKS = 5; // 7 queries each: ≤ 35 PostHog queries per run, under the 120/hour organisation limit
 const BATCH = 400; // Firestore allows 500 writes per batch
 
 /**

@@ -73,6 +73,7 @@ export function sampleDocs(c: Pick<CampaignSummary, "slug" | "startAt" | "endAt"
       countries: split(views, COUNTRIES),
       devices: split(views, DEVICES),
       shares: split(Math.round(sig * (i === spike ? 1.2 : 0.3)), SHARES),
+      shareVisits: split(Math.round(sig * (i === spike ? 3 : 0.8)), SHARES),
     };
   });
 }

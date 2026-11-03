@@ -84,7 +84,7 @@ function summary(c: Campaign): CampaignSummary {
 
 // shortcut: reads the whole collection and filters in memory, so no composite index or field backfill is needed
 // and pre-campaign docs still show. Fine for tens of campaigns (hourly ISR); switch to an indexed query past a few hundred.
-async function visibleCampaigns(): Promise<Campaign[]> {
+export async function visibleCampaigns(): Promise<Campaign[]> {
   const all = isFirebaseAdminConfigured
     ? (await adminDb().collection("petitions").get()).docs.map((d) => toCampaign(d.id, d.data()))
     : fallbackCampaigns;

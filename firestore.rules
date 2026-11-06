@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // All writes go through the server (Admin SDK) after validation and rate limiting; clients only read.
+    match /petitions/{petitionId} {
+      // Drafts and soft-deleted campaigns stay private. Docs from before campaigns have neither field and stay public.
+      allow read: if resource.data.get('status', 'published') == 'published'
+                  && resource.data.get('deletedAt', null) == null;
+      allow write: if false;
+      match /comments/{commentId} {
+        allow read: if true;
+        allow write: if false;
+      }
+      // signers/ and daily/ have no rule, so client access is denied.
+    }
+  }
+}

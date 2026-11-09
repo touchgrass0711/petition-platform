@@ -44,7 +44,7 @@ next-env.d.ts
 # release notes extracted from CHANGELOG
 .release-notes.md
 
-# local assistant config and scratch files (never committed)
+# local tooling config and scratch files (never committed)
 .claude/
 CLAUDE.md
 CLAUDE.local.md

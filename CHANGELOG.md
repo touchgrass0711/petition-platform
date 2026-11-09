@@ -4,6 +4,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Security
+- Patched vulnerable dependencies (postcss, grpc-js, minimatch, glob via overrides; vitest 4).
+
 ### Changed
 - Brand name in the footer and privacy notice default is now OUTSET.ID.
 

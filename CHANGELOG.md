@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Removed
+
+- Debug screenshots from the repository root.
+
 ### Changed
 
 - README leads with the live site, alpha status, privacy summary and roadmap; outdated avatar and data-model notes corrected.

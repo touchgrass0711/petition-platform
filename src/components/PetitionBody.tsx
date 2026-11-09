@@ -11,8 +11,8 @@ import type { CommentPage } from "@/lib/petition";
 import type { Comment } from "@/lib/types";
 import { formatInZone, usePhase } from "@/lib/use-phase";
 import { CommentList } from "./CommentList";
-import { ProgressBar } from "./ProgressBar";
-import { ShareCard } from "./ShareCard";
+import { latestSigners, ProgressBar } from "./ProgressBar";
+import { nextStepLine, ShareCard } from "./ShareCard";
 import { SignInCard } from "./SignInCard";
 import { SignerMenu } from "./SignerMenu";
 import { SignForm } from "./SignForm";
@@ -68,6 +68,7 @@ export function PetitionBody({ campaign, initialPage, renderedAt, shareUrl, chil
         goal={campaign.goal}
         milestones={campaign.milestones}
         dimmed={phase === "ended"}
+        recent={latestSigners([...added, ...initialPage.comments])}
       />
       <div className="lg:sticky lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
         {phase !== "live" ? (
@@ -75,7 +76,14 @@ export function PetitionBody({ campaign, initialPage, renderedAt, shareUrl, chil
         ) : !signer ? (
           <SignInCard onSignedIn={(email, photo) => (setMine(null), setSignedNow(false), signIn(email, photo))} />
         ) : signedHere ? (
-          <ShareCard title={campaign.title} url={shareUrl} alreadySigned={!signedNow} menu={menu} />
+          <ShareCard
+            title={campaign.title}
+            url={shareUrl}
+            alreadySigned={!signedNow}
+            menu={menu}
+            reason={signedNow ? mine?.message : undefined}
+            step={signedNow ? nextStepLine(campaign.signatureCount + added.length - removed, campaign.goal, campaign.milestones) : undefined}
+          />
         ) : (
           <SignForm
             campaign={campaign.slug}

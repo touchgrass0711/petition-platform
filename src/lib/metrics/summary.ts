@@ -4,7 +4,7 @@ import { bucketize, dailyPoints, delta, hourlyPoints, periodTotals, rangeWindow,
 // Daily rollup docs + campaigns → everything the dashboard draws for one selection and range. Pure, no I/O.
 
 export const TRAFFIC = ["views", "visitors", "sessions", "bounces", "durationSum"] as const;
-export const BREAKDOWNS = ["referrers", "countries", "devices", "shares"] as const;
+export const BREAKDOWNS = ["referrers", "countries", "devices", "shares", "shareVisits"] as const;
 const TOP = 6;
 const DAY_MS = 86_400_000;
 

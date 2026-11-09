@@ -16,7 +16,7 @@ const storage = [
 export default async function PrivacyPage() {
   const env = await serverEnv();
   // The campaign owner, not the developer. Contact falls back to the dedicated Gmail that sends sign-in codes.
-  const controller = env.PRIVACY_CONTROLLER_NAME || "DAWN";
+  const controller = env.PRIVACY_CONTROLLER_NAME || "OUTSET.ID";
   const contact = env.PRIVACY_CONTACT_EMAIL || env.GMAIL_USER;
   return (
     <main className="mx-auto max-w-2xl space-y-6 px-4 pt-16 pb-12 text-sm leading-relaxed [&_h2]:text-lg [&_h2]:font-semibold [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5">

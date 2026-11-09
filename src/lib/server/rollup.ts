@@ -21,9 +21,10 @@ export type DayFields = {
   countries: Counts;
   devices: Counts;
   shares: Counts;
+  shareVisits: Counts;
 };
 /** Replaced wholesale on every run (set + mergeFields), so reruns are idempotent and sig/sigH are untouched. */
-export const ROLLUP_FIELDS = ["views", "visitors", "sessions", "bounces", "durationSum", "funnel", "referrers", "countries", "devices", "shares"] as const;
+export const ROLLUP_FIELDS = ["views", "visitors", "sessions", "bounces", "durationSum", "funnel", "referrers", "countries", "devices", "shares", "shareVisits"] as const;
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const DAY_MS = 86_400_000;
@@ -58,10 +59,12 @@ const BREAKDOWNS = {
   countries: { event: "$pageview", value: "properties.$geoip_country_code", none: "unknown" },
   devices: { event: "$pageview", value: "properties.$device_type", none: "unknown" },
   shares: { event: "share_clicked", value: "properties.channel", none: "unknown" },
+  // Page views that arrived through a tagged share link, by the button that made the link.
+  shareVisits: { event: "$pageview", value: "properties.utm_source", none: "unknown", where: "AND properties.utm_medium = 'share'" },
 } as const;
 type Breakdown = keyof typeof BREAKDOWNS;
 
-/** The six HogQL queries for one span. Days are validated, so nothing user-supplied reaches the query text. */
+/** The seven HogQL queries for one span. Days are validated, so nothing user-supplied reaches the query text. */
 export function queriesFor(from: string, to: string) {
   if (!DAY.test(from) || !DAY.test(to)) throw new Error("Invalid rollup span");
   const span = IN_SPAN("timestamp", from, to);
@@ -76,7 +79,7 @@ export function queriesFor(from: string, to: string) {
     Object.entries(BREAKDOWNS).map(([k, b]) => [
       k,
       `SELECT ${DAY_OF("timestamp")} AS d, ${SLUG("properties.$pathname")} AS s, coalesce(${b.value}, '${b.none}') AS v, count() AS c
-       FROM events WHERE ${span} AND event = '${b.event}' GROUP BY d, s, v HAVING s != '' ORDER BY c DESC LIMIT ${ROW_LIMIT}`,
+       FROM events WHERE ${span} AND event = '${b.event}' ${"where" in b ? b.where : ""} GROUP BY d, s, v HAVING s != '' ORDER BY c DESC LIMIT ${ROW_LIMIT}`,
     ]),
   ) as Record<Breakdown, string>;
   return { core, sessions, breakdowns };
@@ -87,7 +90,7 @@ export type Results = { core: unknown[][]; sessions: unknown[][]; breakdowns: Re
 const empty = (): DayFields => ({
   views: 0, visitors: 0, sessions: 0, bounces: 0, durationSum: 0,
   funnel: { started: 0, codeSent: 0, verified: 0 },
-  referrers: {}, countries: {}, devices: {}, shares: {},
+  referrers: {}, countries: {}, devices: {}, shares: {}, shareVisits: {},
 });
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : Number(v) || 0);
 const dayOf = (v: unknown) => String(v ?? "").slice(0, 10);

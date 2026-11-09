@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+## [0.2.0-alpha.1] - 2026-11-09
+
+### Security
+- Patched vulnerable dependencies (postcss, grpc-js, minimatch, glob via overrides; vitest 4).
+
+### Changed
+- Brand name in the footer and privacy notice default is now OUTSET.ID.
+
 ## [0.1.0-alpha.2] - 2026-11-05
 
 ### Changed
@@ -20,6 +28,11 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - Signer menu → Change avatar: pick the Google photo, an uploaded image, initials, or one of six colours. Removing an upload never silently falls back to the Google photo. Google sign-in uses the Google photo by default (live mode carries it in the signer token, and the server only accepts that exact photo URL). `NEXT_PUBLIC_AVATAR_UPLOADS=false` hides image uploads.
 - Groundwork for Master-only service settings (ADR 0007): `MASTER_EMAIL` pins the Master account (developer claim and that email; unset means nobody), service keys saved in the panel are encrypted with AES-256-GCM using `SETTINGS_ENCRYPTION_KEY` and refused when it is missing, panel values override env, and every change is audited without its value. No panel yet.
 - Signer menu under the signer's avatar on the sign card (like YouTube's account menu): edit my signature (name or Anonymous, comment), delete my signature (with confirmation; the count goes down and they can sign again), sign out. Demo Mode keeps changes in the page; live mode (still off) edits and deletes through `/api/comments/mine`, which finds the signature only through the signer's verified uid, applies the signing rules, rate-limits, and removes the comment, signer record and one from the count in one transaction.
+- Share images show progress: "8,452 of 10,000 signed", a bar, and the next milestone (or "Goal reached: 108%").
+- After signing, the prefilled share text quotes the signer's own reason ("I signed … because …", capped at 140 characters), and the thank-you card names the next milestone to reach.
+- One line under the progress bar with the three newest signers' avatars and "Latest: name, time ago", from comments already on the page (no extra reads). Hidden once the campaign ends.
+- `sitemap.xml` (home and public campaigns, or home only in single-campaign mode), `robots.txt` (admin and API disallowed), canonical URLs and schema.org data on campaign pages.
+- Share links carry `utm_source` (button), `utm_medium=share` and `utm_campaign` (slug); the dashboard shows "Visits from shares" by channel. The nightly rollup now runs 7 queries per chunk and at most 5 chunks per run.
 - "Continue with Google" for signers, above the email code. Demo Mode shows a simulated account chooser that writes nothing; signing in again as someone who already signed in this tab shows "You have already signed this petition." `NEXT_PUBLIC_GOOGLE_SIGNIN` switches it (default: on in Demo Mode, off in live).
 - Live mode (still off): Google sign-in swaps a server-verified Google ID token (audience, expiry, provider, verified email) for the same signer uid as the email code, so one signature per person holds across both (ADR 0006).
 - Live mode (still off): email codes can be sent from a Gmail account over SMTP (`GMAIL_USER`, `GMAIL_APP_PASSWORD`), tried after Brevo, Resend and Mailjet, for deploys without their own domain.

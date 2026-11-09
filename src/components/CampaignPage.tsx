@@ -5,7 +5,7 @@ import { PhaseBadge } from "@/components/PhaseBadge";
 import { RichText } from "@/components/RichText";
 import { ShareButtons } from "@/components/ShareButtons";
 import { SiteHeader } from "@/components/SiteHeader";
-import { campaignPhase } from "@/lib/campaign";
+import { campaignPhase, type Campaign } from "@/lib/campaign";
 import { slugSchema } from "@/lib/campaign-schema";
 import { getCampaign, getComments } from "@/lib/petition";
 
@@ -25,9 +25,23 @@ export async function campaignMetadata(slug: string, path: string): Promise<Meta
   return {
     title: c.title,
     description,
+    alternates: { canonical: path },
     openGraph: { title: c.title, description, type: "website", url: path },
     twitter: { card: "summary_large_image", title: c.title, description },
   };
+}
+
+/** schema.org data for search engines. `<` is escaped so campaign text can't close the script tag. */
+export function campaignJsonLd(c: Campaign, url: string) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: c.title,
+    description: c.subtitle || c.descriptionText.slice(0, 200),
+    url,
+    datePublished: c.startAt,
+    dateModified: c.updatedAt,
+  }).replace(/</g, "\\u003c");
 }
 
 export async function CampaignPage({ slug, path }: { slug: string; path: string }) {
@@ -38,6 +52,7 @@ export async function CampaignPage({ slug, path }: { slug: string; path: string 
   const renderedAt = Date.now();
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: campaignJsonLd(campaign, url) }} />
       <SiteHeader />
       <div
         aria-hidden

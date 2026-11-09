@@ -7,6 +7,6 @@ export const contentType = "image/png";
 export const alt = "Petition";
 
 export default async function OgImage() {
-  const { title, signatureCount } = await getPetition();
-  return ogCard(title, signatureCount);
+  const { title, signatureCount, goal } = await getPetition();
+  return ogCard(title, { count: signatureCount, goal });
 }

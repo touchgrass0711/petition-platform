@@ -19,7 +19,7 @@ const TrafficChart = dynamic(() => import("./TrafficChart"), {
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const pct = (v: number | null) => (v === null ? "–" : `${v.toFixed(1)}%`);
-const BREAKDOWN_TITLE = { referrers: "Referrers", shares: "Share buttons", countries: "Countries", devices: "Devices" } as const;
+const BREAKDOWN_TITLE = { referrers: "Referrers", shares: "Share buttons", shareVisits: "Visits from shares", countries: "Countries", devices: "Devices" } as const;
 const SOURCE_NAME: Record<string, string> = { $direct: "Direct", other: "Other" };
 
 export function Insights({ d, onPick }: { d: Summary; onPick: (slug: string) => void }) {
@@ -42,7 +42,7 @@ export function Insights({ d, onPick }: { d: Summary; onPick: (slug: string) => 
         <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle>Where signers come from</CardTitle>
-            <CardDescription>Page views by source, top 6 and Other; share-button clicks by channel.</CardDescription>
+            <CardDescription>Page views by source, top 6 and Other; share-button clicks and the visits they brought, by channel.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             {(Object.keys(BREAKDOWN_TITLE) as (keyof typeof BREAKDOWN_TITLE)[]).map((k) => (

@@ -65,7 +65,7 @@ describe("rollup cron", () => {
     store.set("petitions/save-park/daily/2026-11-01", { sig: 7, sigH: { "09": 7 }, views: 1 });
     const res = await (await call("Bearer s3cret")).json();
     expect(res).toMatchObject({ lastDay: "2026-11-01", chunks: 1, written: 1, caughtUp: true });
-    expect(queries).toHaveLength(6);
+    expect(queries).toHaveLength(7);
     const day = store.get("petitions/save-park/daily/2026-11-01")!;
     expect(day).toMatchObject({ sig: 7, sigH: { "09": 7 }, views: 40, visitors: 30, bounces: 3, funnel: { started: 5, codeSent: 3, verified: 2 } });
     expect([...store.keys()].some((k) => k.includes("junk"))).toBe(false);
@@ -73,7 +73,7 @@ describe("rollup cron", () => {
     // Caught up: a second run makes no queries and no writes.
     const again = await (await call("Bearer s3cret")).json();
     expect(again).toMatchObject({ chunks: 0, written: 0, caughtUp: true });
-    expect(queries).toHaveLength(6);
+    expect(queries).toHaveLength(7);
 
     // A forced rerun of the same day writes identical values.
     store.set("meta/rollup", { lastDay: "2026-10-31" });
@@ -83,9 +83,9 @@ describe("rollup cron", () => {
 
   it("caps a first-run backfill per invocation and saves progress after each chunk", async () => {
     const res = await (await call("Bearer s3cret")).json();
-    expect(res.chunks).toBe(6);
+    expect(res.chunks).toBe(5);
     expect(res.caughtUp).toBe(false);
-    expect(queries).toHaveLength(36);
+    expect(queries).toHaveLength(35);
     expect(store.get("meta/rollup")?.lastDay).toBe(res.lastDay);
   });
 });

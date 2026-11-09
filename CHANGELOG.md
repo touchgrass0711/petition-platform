@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Changed
+
+- Local editor and tooling config and scratch files are now ignored by git.
+
 ### Security
 
 - Public pages no longer show a link to the admin area; it stays reachable by URL only.

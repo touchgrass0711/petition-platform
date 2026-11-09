@@ -9,6 +9,6 @@ export default defineConfig({
       "server-only": path.resolve(__dirname, "src/test/empty.ts"),
     },
   },
-  esbuild: { jsx: "automatic" },
+  oxc: { jsx: { runtime: "automatic" } },
   test: { environment: "node" },
 });

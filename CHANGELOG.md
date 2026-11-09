@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+## [0.2.0-alpha.1] - 2026-11-09
+
 ### Security
 - Patched vulnerable dependencies (postcss, grpc-js, minimatch, glob via overrides; vitest 4).
 

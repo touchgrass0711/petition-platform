@@ -22,7 +22,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const denied = await guard(req, "create");
+  // Single mode allows the first campaign only; deleted ones do not count.
+  const live = async () =>
+    isFirebaseAdminConfigured ? (await adminDb().collection("petitions").where("deletedAt", "==", null).limit(1).get()).size : 1;
+  const denied = await guard(req, "create", live);
   if (denied) return denied;
   if (DEMO_MODE) return NextResponse.json({ error: DEMO_DISABLED_MESSAGE }, { status: 403 });
   const parsed = campaignInputSchema.safeParse(await req.json().catch(() => null));

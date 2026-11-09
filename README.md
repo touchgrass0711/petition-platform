@@ -1,6 +1,6 @@
 <div align="center">
 
-# OUTSET.ID Petition Platform
+# Petition Platform
 
 **Start a petition people actually finish signing.** Fast to load, hard to fake, easy to share on WhatsApp and X.
 
@@ -27,7 +27,7 @@ Most petition tools are slow, full of fake signatures, and leak signer data to a
 
 ## Status: alpha
 
-The live site at **[petition-platform-lime.vercel.app](https://petition-platform-lime.vercel.app)** is the OUTSET.ID production deployment, running in live mode (real sign-ins, real signatures). It is in **alpha** (`v0.2.0-alpha.2`): the platform is up and the first campaign is being prepared, so the home page may show "No campaigns yet" for now. Expect changes; see the [CHANGELOG](CHANGELOG.md).
+The live site at **[petition-platform-lime.vercel.app](https://petition-platform-lime.vercel.app)** is the production deployment, running in live mode (real sign-ins, real signatures). It is in **alpha** (`v0.2.0-alpha.2`): the platform is up and the first campaign is being prepared, so the home page may show "No campaigns yet" for now. Expect changes; see the [CHANGELOG](CHANGELOG.md).
 
 Want to click around first? The [demo](https://nextjs-petition-platform.vercel.app/) runs the same engine in Demo Mode, with seeded campaigns and a view-only admin (`admin@demo.com` / `demo2026` at `/admin`). Nothing you do there is saved.
 
@@ -59,7 +59,7 @@ Signers' email addresses are used only to send or read the sign-in code; the dat
 - [x] Email-code and Google sign-in, one signature per account
 - [x] Multi-campaign engine with scheduling and milestones
 - [x] Comment moderation, metrics dashboard, privacy notice
-- [ ] First live OUTSET.ID campaign ([#5](https://github.com/touchgrass0711/petition-platform/issues/5))
+- [ ] First live campaign ([#5](https://github.com/touchgrass0711/petition-platform/issues/5))
 - [x] All production service keys in place: Turnstile, email, PostHog ([#4](https://github.com/touchgrass0711/petition-platform/issues/4))
 - [ ] Beta, then `v0.2.0` stable
 
@@ -205,7 +205,7 @@ The app runs with an empty `.env.local`. Add services one at a time:
 | `NEXT_PUBLIC_SITE_URL` | Absolute URLs for Open Graph and share links |
 | `OTP_HMAC_SECRET`, `SIGNER_ID_SECRET`, `EMAIL_FROM`, `BREVO_API_KEY` (+ optional `RESEND_API_KEY`, `MAILJET_API_KEY`/`MAILJET_SECRET_KEY`, `GMAIL_USER`/`GMAIL_APP_PASSWORD`) | Live-mode email codes with provider fallback |
 | `NEXT_PUBLIC_GOOGLE_SIGNIN=true` | Live-mode "Continue with Google" for signers (unset: simulated in Demo Mode, off in live) |
-| `PRIVACY_CONTROLLER_NAME`, `PRIVACY_CONTACT_EMAIL` | Who runs the petition and its contact email on `/privacy` (defaults: OUTSET.ID, `GMAIL_USER`) |
+| `PRIVACY_CONTROLLER_NAME`, `PRIVACY_CONTACT_EMAIL` | Who runs the petition and its contact email on `/privacy` (defaults: `GMAIL_USER`) |
 | `CSP_ENFORCE=true` | Enforce the full Content Security Policy instead of report-only |
 
 ### Firebase setup

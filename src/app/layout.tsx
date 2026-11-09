@@ -25,7 +25,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           © 2026 OUTSET.ID. All rights reserved. ·{" "}
           <Link href="/privacy" className="underline">
             Privacy
-          </Link>
+          </Link>{" "}
+          · Built by outset.id
         </footer>
       </body>
     </html>

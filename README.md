@@ -274,4 +274,4 @@ firestore.rules, firestore.indexes.json
 
 ## License
 
-[MIT](LICENSE). Built by Adhi Subagya for OUTSET.ID.
+[MIT](LICENSE). Built by outset.id.

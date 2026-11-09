@@ -10,6 +10,7 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ### Changed
 
+- Footer and README credit now read "Built by outset.id".
 - README leads with the live site, alpha status, privacy summary and roadmap; outdated avatar and data-model notes corrected.
 
 ## [0.2.0-alpha.2] - 2026-11-09

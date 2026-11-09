@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+## [0.2.0-alpha.2] - 2026-11-09
+
 ### Changed
 
 - Local editor and tooling config and scratch files are now ignored by git.

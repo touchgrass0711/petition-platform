@@ -4,6 +4,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Changed
+- Brand name in the footer and privacy notice default is now OUTSET.ID.
+
 ## [0.1.0-alpha.2] - 2026-11-05
 
 ### Changed

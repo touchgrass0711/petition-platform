@@ -154,7 +154,7 @@ The app runs with an empty `.env.local`. Add services one at a time:
 | `NEXT_PUBLIC_SITE_URL` | Absolute URLs for Open Graph and share links |
 | `OTP_HMAC_SECRET`, `SIGNER_ID_SECRET`, `EMAIL_FROM`, `BREVO_API_KEY` (+ optional `RESEND_API_KEY`, `MAILJET_API_KEY`/`MAILJET_SECRET_KEY`, `GMAIL_USER`/`GMAIL_APP_PASSWORD`) | Live-mode email codes with provider fallback |
 | `NEXT_PUBLIC_GOOGLE_SIGNIN=true` | Live-mode "Continue with Google" for signers (unset: simulated in Demo Mode, off in live) |
-| `PRIVACY_CONTROLLER_NAME`, `PRIVACY_CONTACT_EMAIL` | Who runs the petition and its contact email on `/privacy` (defaults: DAWN, `GMAIL_USER`) |
+| `PRIVACY_CONTROLLER_NAME`, `PRIVACY_CONTACT_EMAIL` | Who runs the petition and its contact email on `/privacy` (defaults: OUTSET.ID, `GMAIL_USER`) |
 | `CSP_ENFORCE=true` | Enforce the full Content Security Policy instead of report-only |
 
 ### Firebase setup

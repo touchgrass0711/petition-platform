@@ -18,6 +18,13 @@ describe("blocked", () => {
     for (const cap of ["create", "feature", "delete"] as const) expect(blocked(s, cap, true)).toMatch(/single-campaign/);
     expect(blocked(s, "edit", false)).toBeNull();
   });
+  it("single mode allows creating the first campaign only", () => {
+    const s = { mode: "single" as const, disabled: [] };
+    expect(blocked(s, "create", false, 0)).toBeNull();
+    expect(blocked(s, "create", false, 1)).toMatch(/single-campaign/);
+    expect(blocked(s, "feature", true, 0)).toMatch(/single-campaign/);
+    expect(blocked({ mode: "single", disabled: ["create"] }, "create", false, 0)).toBe("Not available for this account.");
+  });
 });
 
 describe("settingsSchema", () => {

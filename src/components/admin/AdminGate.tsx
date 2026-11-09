@@ -38,5 +38,5 @@ export function useAdminSettings() {
   });
   const settings = data?.settings ?? DEFAULT_SETTINGS;
   const developer = data?.developer ?? false;
-  return { settings, developer, loading: isPending, can: (cap: Capability) => blocked(settings, cap, developer) === null };
+  return { settings, developer, loading: isPending, can: (cap: Capability, campaigns?: number) => blocked(settings, cap, developer, campaigns) === null };
 }

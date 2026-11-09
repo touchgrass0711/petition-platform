@@ -53,7 +53,7 @@ export function CampaignsAdmin() {
             </Button>
           ))}
         </div>
-        {can("create") && (
+        {data && can("create", data.campaigns.filter((c) => c.deletedAt === null).length) && (
           <Link href="/admin/campaigns/new" className={buttonVariants({ size: "sm" })}>
             <Plus aria-hidden /> New campaign
           </Link>
@@ -95,7 +95,7 @@ export function CampaignsAdmin() {
               {isError && <tr><td colSpan={5} className="px-6 py-4 text-destructive">Could not load campaigns.</td></tr>}
               {isPending && <tr><td colSpan={5} className="px-6 py-4 text-muted-foreground">Loading…</td></tr>}
               {data && rows.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-4 text-muted-foreground">{showDeleted ? "No deleted campaigns." : "No campaigns yet."}</td></tr>
+                <tr><td colSpan={5} className="px-6 py-4 text-muted-foreground">{showDeleted ? "No deleted campaigns." : "No campaigns yet. Use New campaign to add the first one."}</td></tr>
               )}
               {rows.map((c) => {
                 const phase = campaignPhase(c);

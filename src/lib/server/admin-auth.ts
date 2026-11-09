@@ -45,9 +45,9 @@ export const isDeveloper = async (req: Request) => (await caller(req)).developer
 export const isMaster = async (req: Request) => (await caller(req)).master;
 
 /** Admin route gate: 401 for non-admins, 403 when the capability is switched off or not in this mode, else null. */
-export async function guard(req: Request, cap: Capability): Promise<NextResponse | null> {
+export async function guard(req: Request, cap: Capability, campaigns?: () => Promise<number>): Promise<NextResponse | null> {
   const who = await caller(req);
   if (!who.admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const why = blocked(await getSettings(), cap, who.developer);
+  const why = blocked(await getSettings(), cap, who.developer, campaigns ? await campaigns() : undefined);
   return why ? NextResponse.json({ error: why }, { status: 403 }) : null;
 }

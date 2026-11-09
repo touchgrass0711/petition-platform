@@ -23,12 +23,16 @@ export type Settings = z.infer<typeof settingsSchema>;
 // Alpha ships as one campaign per deployment; the Master account can switch to multiple in /admin/developer.
 export const DEFAULT_SETTINGS: Settings = { mode: "single", disabled: [] };
 
-// Single mode has exactly one campaign: nothing to add, feature or remove.
+// Single mode has exactly one campaign: nothing to add (once it exists), feature or remove.
 const MULTIPLE_ONLY: Capability[] = ["create", "feature", "delete"];
 
-/** Why a capability is off, or null when allowed. Mode binds everyone; switches never bind a developer. */
-export function blocked(s: Settings, cap: Capability, developer: boolean): string | null {
-  if (s.mode === "single" && MULTIPLE_ONLY.includes(cap)) return "Not available in single-campaign mode.";
+/**
+ * Why a capability is off, or null when allowed. Mode binds everyone; switches never bind a developer.
+ * `campaigns` is the number of non-deleted campaigns; single mode still allows creating the first one.
+ */
+export function blocked(s: Settings, cap: Capability, developer: boolean, campaigns = 1): string | null {
+  const firstCampaign = cap === "create" && campaigns === 0;
+  if (s.mode === "single" && MULTIPLE_ONLY.includes(cap) && !firstCampaign) return "Not available in single-campaign mode.";
   if (!developer && s.disabled.includes(cap)) return "Not available for this account.";
   return null;
 }

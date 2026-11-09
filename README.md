@@ -60,10 +60,10 @@ Signers' email addresses are used only to send or read the sign-in code; the dat
 - [x] Multi-campaign engine with scheduling and milestones
 - [x] Comment moderation, metrics dashboard, privacy notice
 - [ ] First live OUTSET.ID campaign ([#5](https://github.com/touchgrass0711/petition-platform/issues/5))
-- [ ] All production service keys in place: Turnstile, email, PostHog ([#4](https://github.com/touchgrass0711/petition-platform/issues/4))
+- [x] All production service keys in place: Turnstile, email, PostHog ([#4](https://github.com/touchgrass0711/petition-platform/issues/4))
 - [ ] Beta, then `v0.2.0` stable
 
-Ideas and bug reports are welcome in [Issues](https://github.com/touchgrass0711/petition-platform/issues).
+Taking over the site? Start with [HANDOVER.md](HANDOVER.md). Ideas and bug reports are welcome in [Issues](https://github.com/touchgrass0711/petition-platform/issues).
 
 ## Stack
 

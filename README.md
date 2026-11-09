@@ -1,20 +1,69 @@
-# Petition Platform
+<div align="center">
 
-A generic, production-shaped petition engine built with **Next.js**, **Firebase** and **Vercel**. Visitors can sign with a comment and an optional avatar, share the campaign, and page through other signers. A hidden admin dashboard shows traffic analytics and controls the goal and pinned comments.
+# OUTSET.ID Petition Platform
 
-The public deployment runs in **Demo Mode**: everything works in the browser, but nothing is written to the database. It is read-heavy, edge-cached and costs close to nothing to keep online.
+**Start a petition people actually finish signing.** Fast to load, hard to fake, easy to share on WhatsApp and X.
 
-> Demo admin login: `admin@demo.com` / `demo2026` at `/admin` (view-only)
+[![Live site](https://img.shields.io/badge/live-petition--platform--lime.vercel.app-000?logo=vercel)](https://petition-platform-lime.vercel.app)
+[![CI](https://github.com/touchgrass0711/petition-platform/actions/workflows/check.yml/badge.svg?branch=dev)](https://github.com/touchgrass0711/petition-platform/actions/workflows/check.yml)
+![Status: alpha](https://img.shields.io/badge/status-alpha-orange)
+![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+[**Visit the live site →**](https://petition-platform-lime.vercel.app) · [Try the demo](https://nextjs-petition-platform.vercel.app/) · [Run it locally](#getting-started)
+
+</div>
 
 ---
 
+## Why this exists
+
+Most petition tools are slow, full of fake signatures, and leak signer data to ad trackers. This one is built the other way round:
+
+- **One signature per real person.** Signers confirm with Google or a 6-digit email code, Turnstile blocks scripts, and a press-and-hold button stops accidental signs.
+- **Loads instantly, even when it goes viral.** Pages are cached at the edge for 24 hours, so a spike in traffic hits Vercel's cache, not the database.
+- **Built to be shared.** Every campaign gets its own Open Graph image, and signing ends on a share card (system share sheet, WhatsApp, X, copy link).
+- **Respects signers.** No analytics cookies, a plain-language [privacy notice](https://petition-platform-lime.vercel.app/privacy), and signers can edit or delete their own comment.
+
+## Status: alpha
+
+The live site at **[petition-platform-lime.vercel.app](https://petition-platform-lime.vercel.app)** is the OUTSET.ID production deployment, running in live mode (real sign-ins, real signatures). It is in **alpha** (`v0.2.0-alpha.2`): the platform is up and the first campaign is being prepared, so the home page may show "No campaigns yet" for now. Expect changes; see the [CHANGELOG](CHANGELOG.md).
+
+Want to click around first? The [demo](https://nextjs-petition-platform.vercel.app/) runs the same engine in Demo Mode, with seeded campaigns and a view-only admin (`admin@demo.com` / `demo2026` at `/admin`). Nothing you do there is saved.
+
 ## Features
 
-- Server-rendered petition page with a progress bar, share links (WhatsApp, X, copy link) and generated Open Graph images
-- Sign form with client and server validation, bot protection, rate limiting and in-browser avatar compression
-- Comments paginated 10 at a time and cached client-side
-- Admin dashboard with 7-day page views, visitors and top traffic sources from PostHog, plus goal and pin controls
-- Demo Mode, which keeps the database at zero writes and the public admin view-only
+**For signers**
+- Campaign pages with a progress bar, milestone ladder, and Live / Scheduled / Ended / Achieved badges that flip at the exact start and end time
+- Sign in with Google or an emailed 6-digit code, sign anonymously by default, and add a comment and a small avatar (compressed in the browser to a 64 px WebP)
+- Press-and-hold signing (mouse, touch, or Space/Enter) so a stray tap never signs
+- Edit or delete your own comment later; light and dark theme
+
+**For organisers**
+- Admin dashboard: create and schedule campaigns with a rich-text description, goal and time zone
+- Moderate comments: pin up to 3, hide spam
+- Traffic and signature charts from 24 hours to all time, top sources, and a service health card
+- Single-campaign mode by default, multi-campaign when you need it
+
+**Under the hood**
+- Validation with Zod on client and server, Cloudflare Turnstile, Upstash rate limits, and Firestore rules that deny every client write
+- Daily PostHog rollup into Firestore so charts stay fast and within API limits
+- Demo Mode, which runs the full pipeline but writes nothing, for safe public demos
+
+## Privacy
+
+Signers' email addresses are used only to send or read the sign-in code; the database keeps a coded fingerprint, not the email itself. Comments can be posted as "Anonymous" (the default). PostHog runs without cookies and nothing tracks you across sites. The full notice, including processors, retention and your rights, is at [`/privacy`](https://petition-platform-lime.vercel.app/privacy) and in [`src/app/privacy/page.tsx`](src/app/privacy/page.tsx). Found a security issue? Please email the maintainer instead of opening a public issue.
+
+## Roadmap
+
+- [x] Email-code and Google sign-in, one signature per account
+- [x] Multi-campaign engine with scheduling and milestones
+- [x] Comment moderation, metrics dashboard, privacy notice
+- [ ] First live OUTSET.ID campaign ([#5](https://github.com/touchgrass0711/petition-platform/issues/5))
+- [ ] All production service keys in place: Turnstile, email, PostHog ([#4](https://github.com/touchgrass0711/petition-platform/issues/4))
+- [ ] Beta, then `v0.2.0` stable
+
+Ideas and bug reports are welcome in [Issues](https://github.com/touchgrass0711/petition-platform/issues).
 
 ## Stack
 
@@ -58,8 +107,10 @@ All Firestore reads and writes go through the server with the Firebase Admin SDK
 ### Data model
 
 ```
-petitions/{petitionId}          title, description, goal, signatureCount
-petitions/{petitionId}/comments name, message, avatarUrl, pinned, createdAt
+petitions/{slug}               title, description, goal, signatureCount, status, startAt, endAt
+petitions/{slug}/comments      name, message, avatarUrl, pinned, hidden, createdAt
+petitions/{slug}/signers/{id}  one doc per signer (blocks double signing)
+petitions/{slug}/daily/{day}   traffic rollup from PostHog (daily cron)
 ```
 
 Comments are ordered `pinned DESC, createdAt DESC` (composite index in `firestore.indexes.json`) and paginated with a document cursor.
@@ -76,7 +127,7 @@ sequenceDiagram
   participant CF as Turnstile
   participant DB as Firestore
   U->>U: Zod validation (React Hook Form)
-  U->>U: Compress avatar to ~50KB WebP
+  U->>U: Compress avatar to a 64 px WebP (≤ 8 KB)
   U->>API: name, message, avatarUrl, turnstileToken
   API->>RL: limit(ip)
   RL-->>API: 3 per minute exceeded? → 429
@@ -145,7 +196,7 @@ The app runs with an empty `.env.local`. Add services one at a time:
 
 | Variables | Enables |
 | --- | --- |
-| `NEXT_PUBLIC_FIREBASE_*` | Real admin login via Firebase Auth, avatar uploads |
+| `NEXT_PUBLIC_FIREBASE_*` | Real admin and signer login via Firebase Auth |
 | `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | Firestore reads/writes, token verification, `npm run seed` |
 | `ADMIN_EMAILS` | Who may use `/admin` (developer accounts are admins without being listed) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Bot protection (`.env.example` has Cloudflare's test keys) |
@@ -201,11 +252,15 @@ CI (`.github/workflows/check.yml`) runs lint, typecheck, tests and build on ever
 ```
 src/
   app/
-    page.tsx                 Petition page (ISR 24h, metadata)
+    page.tsx                 Home: featured campaign or campaign list (ISR 24h)
     opengraph-image.tsx      Generated share image
     admin/page.tsx           Admin login and dashboard
     api/comments/            GET (paged, edge-cached) and POST (sign)
-    api/admin/               stats, petition goal, comment pin
+    api/admin/               campaigns, comment moderation, metrics, health, settings, integrations
+    api/auth/                email code and Google sign-in
+    api/cron/rollup/         daily PostHog → Firestore rollup
+    c/[slug]/                Campaign page (multi-campaign mode)
+    privacy/                 Privacy notice
   components/                UI, plus admin/ for the dashboard
   data/seed.ts               Demo petition and comments
   lib/
@@ -219,4 +274,4 @@ firestore.rules, firestore.indexes.json
 
 ## License
 
-MIT
+[MIT](LICENSE). Built by Adhi Subagya for OUTSET.ID.

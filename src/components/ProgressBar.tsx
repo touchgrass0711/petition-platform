@@ -1,10 +1,17 @@
+import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { milestoneLabel, type Milestone } from "@/lib/campaign";
+import type { Comment } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { SignerAvatar } from "./SignerAvatar";
 
-type Props = { count: number; goal: number; milestones?: Milestone[]; dimmed?: boolean };
+type Props = { count: number; goal: number; milestones?: Milestone[]; dimmed?: boolean; recent?: Comment[] };
 
-export function ProgressBar({ count, goal, milestones = [], dimmed = false }: Props) {
+/** Newest signers first, from comments already on the page (no extra read). Pinned order is ignored here. */
+export const latestSigners = (comments: Comment[], n = 3) =>
+  [...comments].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, n);
+
+export function ProgressBar({ count, goal, milestones = [], dimmed = false, recent = [] }: Props) {
   // The count keeps going past the goal ("108%"); only the bar stops at full.
   const pct = goal > 0 ? Math.round((count / goal) * 100) : 0;
   const next = milestones.find((m) => m.count > count);
@@ -51,6 +58,21 @@ export function ProgressBar({ count, goal, milestones = [], dimmed = false }: Pr
             Next milestone: <span className="text-foreground">{milestoneLabel(next)}</span> (
             {(next.count - count).toLocaleString("en-US")} to go)
           </p>
+        )}
+        {recent.length > 0 && !dimmed && (
+          <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+            <div aria-hidden className="flex -space-x-1.5 [&>*]:size-6 [&>*]:ring-2 [&>*]:ring-card">
+              {recent.map((c) => (
+                <SignerAvatar key={c.id} name={c.name} avatarUrl={c.avatarUrl} />
+              ))}
+            </div>
+            <p className="truncate">
+              Latest: <span className="text-foreground">{recent[0].name}</span>,{" "}
+              <time dateTime={recent[0].createdAt} suppressHydrationWarning>
+                {formatDistanceToNow(new Date(recent[0].createdAt), { addSuffix: true })}
+              </time>
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

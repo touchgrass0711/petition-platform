@@ -30,6 +30,9 @@ describe("queriesFor", () => {
   it("refuses anything but plain days, so nothing else reaches the query text", () => {
     expect(() => queriesFor("2026-11-01' OR 1=1 --", "2026-11-02")).toThrow();
     expect(queriesFor("2026-11-01", "2026-11-02").core).toContain("toDateTime('2026-11-01 00:00:00', 'UTC')");
+    const b = queriesFor("2026-11-01", "2026-11-02").breakdowns;
+    expect(b.shareVisits).toContain("properties.utm_medium = 'share'");
+    expect(b.referrers).not.toContain("utm_medium");
   });
 });
 
@@ -64,6 +67,7 @@ describe("buildDocs", () => {
       countries: [["2026-11-01", "save-park", "ID", 100]],
       devices: [],
       shares: [["2026-11-01", "save-park", "whatsapp", "4"]],
+      shareVisits: [["2026-11-01", "save-park", "whatsapp", 9]],
     },
   };
 
@@ -77,6 +81,7 @@ describe("buildDocs", () => {
       countries: { ID: 100 },
       devices: {},
       shares: { whatsapp: 4 },
+      shareVisits: { whatsapp: 9 },
     });
   });
 

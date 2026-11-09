@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Security
+
+- Public pages no longer show a link to the admin area; it stays reachable by URL only.
+
 ## [0.2.0-alpha.1] - 2026-11-09
 
 ### Security

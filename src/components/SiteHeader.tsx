@@ -1,6 +1,5 @@
 import { Megaphone } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function SiteHeader() {
@@ -14,9 +13,6 @@ export function SiteHeader() {
           Petition
         </Link>
         <nav className="flex items-center gap-1">
-          <Link href="/admin" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-            Admin
-          </Link>
           <ThemeToggle />
         </nav>
       </div>
